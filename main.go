@@ -37,6 +37,7 @@ func (c replaceCmd) Run(args []string) error {
 	if err != nil {
 		return err
 	}
+	f.Close()
 
 	nodes, err := xmlquery.QueryAll(doc, c.XPath)
 	if err != nil {
@@ -74,6 +75,7 @@ func (c deleteCmd) Run(args []string) error {
 	if err != nil {
 		return err
 	}
+	f.Close()
 
 	nodes, err := xmlquery.QueryAll(doc, c.XPath)
 	if err != nil {
@@ -114,6 +116,7 @@ func (c addCmd) Run(args []string) error {
 	if err != nil {
 		return err
 	}
+	f.Close()
 
 	nodes, err := xmlquery.QueryAll(doc, c.XPath)
 	if err != nil {
