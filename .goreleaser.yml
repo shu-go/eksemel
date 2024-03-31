@@ -28,6 +28,11 @@ archives:
     format_overrides:
       - goos: windows
         format: zip
+    files:
+      - LICENSE
+      - README.md
+      - help_wip.xml
+      - gen_help.bat
 release:
   prerelease: auto
 changelog:
