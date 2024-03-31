@@ -16,10 +16,10 @@ github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINE
 github.com/rivo/uniseg v0.2.0/go.mod h1:J6wj4VEh+S6ZtnVlnTBMWIodfgj8LQOQFoIToxlJtxc=
 github.com/rivo/uniseg v0.4.7 h1:WUdvkW8uEhrYfLC4ZzdpI2ztxP1I582+49Oc5Mq64VQ=
 github.com/rivo/uniseg v0.4.7/go.mod h1:FN3SvrM+Zdj16jyLfmOkMNblXMcoc8DfTHruCPUcx88=
-github.com/shu-go/cliparser v0.2.2 h1:EONHyGHC+9l2mukTBNsxvngXro73T22kXb+agVFd0CY=
-github.com/shu-go/cliparser v0.2.2/go.mod h1:oX+xgwUi9B2OzBFudKc5ayoqWhlVAbuN67rAqyWvvQ4=
-github.com/shu-go/gli/v2 v2.0.1 h1:XA1QSfUdpWW1FIqLjuXo+Gs/IjEy+uviuxKQ45IRYC8=
-github.com/shu-go/gli/v2 v2.0.1/go.mod h1:pSC0XKb69hEarQpiQU74CNiKpcS7a90iJAMUGL3SinQ=
+github.com/shu-go/cliparser v0.2.3 h1:WDpRXY3bCylSqwm3qeXdeIU5e5ehVT96ya2mA6FmlG0=
+github.com/shu-go/cliparser v0.2.3/go.mod h1:oX+xgwUi9B2OzBFudKc5ayoqWhlVAbuN67rAqyWvvQ4=
+github.com/shu-go/gli/v2 v2.1.0 h1:Rb9EO4C4oeM7HImxvpiqAefvtXN+JCnq71PzKohHE+Q=
+github.com/shu-go/gli/v2 v2.1.0/go.mod h1:Dg0CZx88Z+7gLxOjmNBTxUBn2Rvq6jQPVuZBbEZC32A=
 github.com/shu-go/gotwant v0.0.0-20190920074605-b4f19c0bac91 h1:nwDc3kHbf9scf1UZIWiWw5tZF3Z4yOJAMjNN+kYXJwE=
 github.com/shu-go/gotwant v0.0.0-20190920074605-b4f19c0bac91/go.mod h1:FZepfqvib0mXjHiaQPTv0RUD5QMpMA/FHLfBQjZRRQg=
 github.com/yuin/goldmark v1.4.13/go.mod h1:6yULJ656Px+3vBD8DxQVa3kxgyrAnzto9xy5taEt/CY=
