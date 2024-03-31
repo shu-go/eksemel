@@ -1,0 +1,32 @@
+<?xml version="1.0" standalone="yes"?>
+<xml>
+    <command name="add">
+        <options>
+            <option name="xpath">
+                <required required="true" />
+                <desc>An XPath to the parent</desc>
+            </option>
+            <option name="name">
+                <desc>The name of added node</desc>
+            </option>
+            <option name="value">
+                <desc>@attrname, '#cdata-section', '#text' and '#comment' can have --value</desc>
+            </option>
+        </options>
+    </command>
+    <command name="replace">
+        <options>
+            <option name="xpath">
+                <required required="true" />
+                <desc>An XPath to the target</desc>
+            </option>
+            <option name="value">
+                <desc>new value</desc>
+            </option>
+            <option name="dummy">
+                <desc>this is a false</desc>
+            </option>
+            <synopsis>eksemel --xpath "//a/b/c/text()" --value "new text"</synopsis>
+        </options>
+    </command>
+</xml>
