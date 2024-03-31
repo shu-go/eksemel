@@ -3,6 +3,7 @@ module github.com/shu-go/eksemel
 go 1.22.1
 
 require (
+	github.com/andrew-d/go-termutil v0.0.0-20150726205930-009166a695a2
 	github.com/antchfx/xmlquery v1.3.18
 	github.com/go-xmlfmt/xmlfmt v1.1.2
 	github.com/shu-go/gli/v2 v2.0.1

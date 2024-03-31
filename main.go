@@ -3,9 +3,11 @@ package main
 import (
 	"errors"
 	"fmt"
+	"io"
 	"os"
 	"strings"
 
+	"github.com/andrew-d/go-termutil"
 	"github.com/antchfx/xmlquery"
 	"github.com/go-xmlfmt/xmlfmt"
 	"github.com/shu-go/gli/v2"
@@ -25,19 +27,27 @@ type replaceCmd struct {
 }
 
 func (c replaceCmd) Run(args []string) error {
-	if len(args) == 0 {
-		return errors.New("input required")
+	var input io.ReadCloser
+
+	if !termutil.Isatty(os.Stdin.Fd()) {
+		input = NewFakeCloseReader(os.Stdin)
+	} else {
+		if len(args) == 0 {
+			return errors.New("input required")
+		}
+
+		f, err := os.Open(args[0])
+		if err != nil {
+			return err
+		}
+		input = f
 	}
 
-	f, err := os.Open(args[0])
+	doc, err := xmlquery.Parse(input)
 	if err != nil {
 		return err
 	}
-	doc, err := xmlquery.Parse(f)
-	if err != nil {
-		return err
-	}
-	f.Close()
+	input.Close()
 
 	nodes, err := xmlquery.QueryAll(doc, c.XPath)
 	if err != nil {
@@ -63,19 +73,27 @@ type deleteCmd struct {
 }
 
 func (c deleteCmd) Run(args []string) error {
-	if len(args) == 0 {
-		return errors.New("input required")
+	var input io.ReadCloser
+
+	if !termutil.Isatty(os.Stdin.Fd()) {
+		input = NewFakeCloseReader(os.Stdin)
+	} else {
+		if len(args) == 0 {
+			return errors.New("input required")
+		}
+
+		f, err := os.Open(args[0])
+		if err != nil {
+			return err
+		}
+		input = f
 	}
 
-	f, err := os.Open(args[0])
+	doc, err := xmlquery.Parse(input)
 	if err != nil {
 		return err
 	}
-	doc, err := xmlquery.Parse(f)
-	if err != nil {
-		return err
-	}
-	f.Close()
+	input.Close()
 
 	nodes, err := xmlquery.QueryAll(doc, c.XPath)
 	if err != nil {
@@ -104,19 +122,27 @@ type addCmd struct {
 }
 
 func (c addCmd) Run(args []string) error {
-	if len(args) == 0 {
-		return errors.New("input required")
+	var input io.ReadCloser
+
+	if !termutil.Isatty(os.Stdin.Fd()) {
+		input = NewFakeCloseReader(os.Stdin)
+	} else {
+		if len(args) == 0 {
+			return errors.New("input required")
+		}
+
+		f, err := os.Open(args[0])
+		if err != nil {
+			return err
+		}
+		input = f
 	}
 
-	f, err := os.Open(args[0])
+	doc, err := xmlquery.Parse(input)
 	if err != nil {
 		return err
 	}
-	doc, err := xmlquery.Parse(f)
-	if err != nil {
-		return err
-	}
-	f.Close()
+	input.Close()
 
 	nodes, err := xmlquery.QueryAll(doc, c.XPath)
 	if err != nil {
