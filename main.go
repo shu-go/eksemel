@@ -174,13 +174,11 @@ func (c addCmd) Run(args []string) error {
 
 		if strings.HasPrefix(nodeName, "@") {
 			xmlquery.AddAttr(n, nodeName[1:], c.Value)
-
 		} else if nodeName == "#text" {
 			addfunc(n, &xmlquery.Node{
 				Type: xmlquery.TextNode,
 				Data: c.Value,
 			})
-
 		} else if nodeName == "#cdata-section" {
 			nn := &xmlquery.Node{
 				Type: xmlquery.CharDataNode,
