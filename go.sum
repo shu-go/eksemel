@@ -18,6 +18,8 @@ github.com/rivo/uniseg v0.4.7 h1:WUdvkW8uEhrYfLC4ZzdpI2ztxP1I582+49Oc5Mq64VQ=
 github.com/rivo/uniseg v0.4.7/go.mod h1:FN3SvrM+Zdj16jyLfmOkMNblXMcoc8DfTHruCPUcx88=
 github.com/shu-go/cliparser v0.2.3 h1:WDpRXY3bCylSqwm3qeXdeIU5e5ehVT96ya2mA6FmlG0=
 github.com/shu-go/cliparser v0.2.3/go.mod h1:oX+xgwUi9B2OzBFudKc5ayoqWhlVAbuN67rAqyWvvQ4=
+github.com/shu-go/ennet v0.1.0 h1:SjlRW8M3QpeMLfZXbZgdnrEUT3F1G3Ho3/uR048ehZM=
+github.com/shu-go/ennet v0.1.0/go.mod h1:hxXk8BfECid/TAkQXjmQCDpWxpITswTgxux/7d7GBfY=
 github.com/shu-go/gli/v2 v2.1.0 h1:Rb9EO4C4oeM7HImxvpiqAefvtXN+JCnq71PzKohHE+Q=
 github.com/shu-go/gli/v2 v2.1.0/go.mod h1:Dg0CZx88Z+7gLxOjmNBTxUBn2Rvq6jQPVuZBbEZC32A=
 github.com/shu-go/gotwant v0.0.0-20190920074605-b4f19c0bac91 h1:nwDc3kHbf9scf1UZIWiWw5tZF3Z4yOJAMjNN+kYXJwE=
@@ -25,6 +27,8 @@ github.com/shu-go/gotwant v0.0.0-20190920074605-b4f19c0bac91/go.mod h1:FZepfqvib
 github.com/yuin/goldmark v1.4.13/go.mod h1:6yULJ656Px+3vBD8DxQVa3kxgyrAnzto9xy5taEt/CY=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
 golang.org/x/crypto v0.0.0-20210921155107-089bfa567519/go.mod h1:GvvjBRRGRdwPK5ydBHafDWAxML/pGHZbMvKqRZ5+Abc=
+golang.org/x/exp v0.0.0-20240404231335-c0f41cb1a7a0 h1:985EYyeCOxTpcgOTJpflJUwOeEz0CQOdPt73OzpE9F8=
+golang.org/x/exp v0.0.0-20240404231335-c0f41cb1a7a0/go.mod h1:/lliqkxwWAhPjf5oSOIJup2XcqJaw8RGS6k3TGEc7GI=
 golang.org/x/mod v0.6.0-dev.0.20220419223038-86c51ed26bb4/go.mod h1:jJ57K6gSWd91VN4djpZkiMVwK6gcyfeH4XE8wZrZaV4=
 golang.org/x/net v0.0.0-20190620200207-3b0461eec859/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=
 golang.org/x/net v0.0.0-20210226172049-e18ecbb05110/go.mod h1:m0MpNAwzfU5UDzcl9v0D8zg8gWTRqZa9RBIspLL5mdg=

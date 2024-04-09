@@ -3,6 +3,7 @@ eksemel add --xpath \"//command[@name='add']//option[@name='name']\" --name desc
 eksemel add --xpath \"//command[@name='add']//option[@name='name']\" --name required/@required --value true | ^
 eksemel add --xpath \"//command[@name='add']//option[@name='value']\" --name #comment --value "ADD" | ^
 eksemel add --xpath \"//command[@name='add']//option[@name='value']\" --name desc --value "element also can have --value, to add <name>value</name>" | ^
+eksemel add --xpath \"//command[@name='add']/options\" --ennet "\"option[name=ennet]{emmet-like abbreviation}\"" | ^
 eksemel add --xpath \"//command[@name='replace']\" --name #comment --value "DEL dummy" | ^
 eksemel add --xpath \"//command[@name='replace']\" --name #comment --value "ADD delete" | ^
 eksemel delete --xpath \"//command[@name='replace']//option[@name='dummy']\" | ^

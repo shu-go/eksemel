@@ -46,6 +46,7 @@ Add, update and delete from an XML file by XPath.
 
 ```bat
 eksemel add --xpath \"//command[@name='add']//option[@name='name']\" --name #comment --value "ADD" help_wip.xml | ^
+eksemel add --xpath \"//command[@name='add']/options\" --ennet "\"option[name=ennet]{emmet-like abbreviation}\"" | ^
 eksemel delete --xpath \"//command[@name='replace']//option[@name='dummy']\" | ^
 eksemel replace --xpath \"/xml\" --value eksemel > help.xml
 ```
