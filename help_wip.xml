@@ -26,7 +26,7 @@
             <option name="dummy">
                 <desc>this is a false</desc>
             </option>
-            <synopsis>eksemel replace --xpath "//a/b/c/text()" --value "new text"</synopsis>
         </options>
+        <synopsis>eksemel replace --xpath "//a/b/c/text()" --value "new text"</synopsis>
     </command>
 </xml>
