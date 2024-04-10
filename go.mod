@@ -6,7 +6,7 @@ require (
 	github.com/andrew-d/go-termutil v0.0.0-20150726205930-009166a695a2
 	github.com/antchfx/xmlquery v1.4.0
 	github.com/go-xmlfmt/xmlfmt v1.1.2
-	github.com/shu-go/ennet v0.2.0
+	github.com/shu-go/ennet v0.3.0
 	github.com/shu-go/gli/v2 v2.1.1
 )
 
