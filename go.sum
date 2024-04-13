@@ -19,6 +19,10 @@ github.com/shu-go/cliparser v0.2.4 h1:6RJjRRy2aTx0f+hAX8gp9Lf5+w3Y7fcvvorWmXcmdG
 github.com/shu-go/cliparser v0.2.4/go.mod h1:oX+xgwUi9B2OzBFudKc5ayoqWhlVAbuN67rAqyWvvQ4=
 github.com/shu-go/ennet v0.3.0 h1:/ZTZxrNG6a2gU26zV2vttKO1tU1N8MxtymNArDwwOas=
 github.com/shu-go/ennet v0.3.0/go.mod h1:hxXk8BfECid/TAkQXjmQCDpWxpITswTgxux/7d7GBfY=
+github.com/shu-go/ennet v0.4.0 h1:vXn8WcvtDxgoSwxW8OiM58X9PGrYgEv7Unq58fnBl8k=
+github.com/shu-go/ennet v0.4.0/go.mod h1:hxXk8BfECid/TAkQXjmQCDpWxpITswTgxux/7d7GBfY=
+github.com/shu-go/ennet v0.4.3 h1:1QARqotp0GrJtyv0E7rbc1nk8G1KGZFqYYMpFwjh6Fw=
+github.com/shu-go/ennet v0.4.3/go.mod h1:EqlfDAcg+jXfNfpm11p6SvGdN2+PLmhEjxn21aIbe4E=
 github.com/shu-go/gli/v2 v2.1.1 h1:K3nvPivp3OcnWCKbEZmJLLxk8RrT9Os3YqAP4ZUqV+8=
 github.com/shu-go/gli/v2 v2.1.1/go.mod h1:zx0BtgXdLVRSaQUla1Q5XLfPHyyA0HLipeD81A0EkHs=
 github.com/shu-go/gotwant v0.0.0-20190920074605-b4f19c0bac91 h1:nwDc3kHbf9scf1UZIWiWw5tZF3Z4yOJAMjNN+kYXJwE=
