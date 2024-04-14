@@ -10,7 +10,6 @@ import (
 
 	"github.com/andrew-d/go-termutil"
 	"github.com/antchfx/xmlquery"
-	"github.com/go-xmlfmt/xmlfmt"
 	"github.com/shu-go/gli/v2"
 
 	"github.com/shu-go/ennet"
@@ -27,6 +26,9 @@ type replaceCmd struct {
 
 	XPath string `cli:"xpath" required:"true"`
 	Value string `cli:"value" required:"true"`
+
+	Indent       int  `cli:"indent=NUMBER" default:"4"`
+	EmptyElement bool `cli:"empty" default:"true"`
 }
 
 func (c replaceCmd) Run(args []string) error {
@@ -64,7 +66,7 @@ func (c replaceCmd) Run(args []string) error {
 		}
 	}
 
-	fmt.Println(strings.TrimSpace(xmlfmt.FormatXML(doc.OutputXML(true), "", "  ", true)))
+	OutputXML(os.Stdout, doc, OutputConfig{Indent: strings.Repeat(" ", c.Indent), EmptyElement: c.EmptyElement})
 
 	return nil
 }
@@ -73,6 +75,9 @@ type deleteCmd struct {
 	_ struct{} `help:"--xpath //* hoge.xml"`
 
 	XPath string `cli:"xpath" required:"true"`
+
+	Indent       int  `cli:"indent=NUMBER" default:"4"`
+	EmptyElement bool `cli:"empty" default:"true"`
 }
 
 func (c deleteCmd) Run(args []string) error {
@@ -110,7 +115,7 @@ func (c deleteCmd) Run(args []string) error {
 		}
 	}
 
-	fmt.Println(strings.TrimSpace(xmlfmt.FormatXML(doc.OutputXML(true), "", "  ", true)))
+	OutputXML(os.Stdout, doc, OutputConfig{Indent: strings.Repeat(" ", c.Indent), EmptyElement: c.EmptyElement})
 
 	return nil
 }
@@ -125,6 +130,9 @@ type addCmd struct {
 	Ennet string `cli:"ennet" help:"emmet-like abbreviation"`
 
 	Sibling bool `cli:"sibling" default:"false" help:"as a LAST sibling"`
+
+	Indent       int  `cli:"indent=NUMBER" default:"4"`
+	EmptyElement bool `cli:"empty" default:"true"`
 }
 
 func (c addCmd) Before() error {
@@ -253,7 +261,7 @@ func (c addCmd) Run(args []string) error {
 
 	}
 
-	fmt.Println(strings.TrimSpace(xmlfmt.FormatXML(doc.OutputXML(true), "", "  ", true)))
+	OutputXML(os.Stdout, doc, OutputConfig{Indent: strings.Repeat(" ", c.Indent), EmptyElement: c.EmptyElement})
 
 	return nil
 }
