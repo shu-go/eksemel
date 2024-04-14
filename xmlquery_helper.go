@@ -140,9 +140,9 @@ func outputXML(b *bufio.Writer, n *xmlquery.Node, level int, config OutputConfig
 }
 
 func isOnelineText(n *xmlquery.Node) bool {
-	return n != nil &&
+	return n == nil ||
 		n.Type == xmlquery.TextNode &&
-		strings.IndexByte(strings.TrimSpace(n.Data), '\n') == -1 &&
-		n.NextSibling == nil &&
-		n.PrevSibling == nil
+			strings.IndexByte(strings.TrimSpace(n.Data), '\n') == -1 &&
+			n.NextSibling == nil &&
+			n.PrevSibling == nil
 }
