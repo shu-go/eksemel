@@ -21,14 +21,18 @@ type globalCmd struct {
 	Add     addCmd
 }
 
+type common struct {
+	Indent       int  `cli:"indent=NUMBER" default:"4"`
+	EmptyElement bool `cli:"empty" default:"true"`
+}
+
 type replaceCmd struct {
 	_ struct{} `help:"--xpath //* --value newvalue hoge.xml"`
 
 	XPath string `cli:"xpath" required:"true"`
 	Value string `cli:"value" required:"true"`
 
-	Indent       int  `cli:"indent=NUMBER" default:"4"`
-	EmptyElement bool `cli:"empty" default:"true"`
+	common
 }
 
 func (c replaceCmd) Run(args []string) error {
@@ -76,8 +80,7 @@ type deleteCmd struct {
 
 	XPath string `cli:"xpath" required:"true"`
 
-	Indent       int  `cli:"indent=NUMBER" default:"4"`
-	EmptyElement bool `cli:"empty" default:"true"`
+	common
 }
 
 func (c deleteCmd) Run(args []string) error {
@@ -131,8 +134,7 @@ type addCmd struct {
 
 	Sibling bool `cli:"sibling" default:"false" help:"as a LAST sibling"`
 
-	Indent       int  `cli:"indent=NUMBER" default:"4"`
-	EmptyElement bool `cli:"empty" default:"true"`
+	common
 }
 
 func (c addCmd) Before() error {
