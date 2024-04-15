@@ -203,37 +203,20 @@ func (c addCmd) Run(args []string) error {
 			}
 		}
 	} else {
-		first := true
-		addfunc := func(parent *xmlquery.Node, n *xmlquery.Node) *xmlquery.Node {
-			if c.Sibling && first {
-				xmlquery.AddSibling(parent, n)
-				first = false
-				return parent.Parent.LastChild
-			}
-
-			xmlquery.AddChild(parent, n)
-			return parent.LastChild
+		addfunc := xmlquery.AddChild
+		if c.Sibling {
+			addfunc = xmlquery.AddSibling
 		}
 
 		for _, n := range nodes {
-			parentNames := strings.Split(c.Name, "/")
-			nodeName := parentNames[len(parentNames)-1]
-			for _, pn := range parentNames[:len(parentNames)-1] {
-				last := addfunc(n, &xmlquery.Node{
-					Type: xmlquery.ElementNode,
-					Data: pn,
-				})
-				n = last
-			}
-
-			if strings.HasPrefix(nodeName, "@") {
-				xmlquery.AddAttr(n, nodeName[1:], c.Value)
-			} else if nodeName == "#text" {
+			if strings.HasPrefix(c.Name, "@") {
+				xmlquery.AddAttr(n, c.Name[1:], c.Value)
+			} else if c.Name == "#text" {
 				addfunc(n, &xmlquery.Node{
 					Type: xmlquery.TextNode,
 					Data: c.Value,
 				})
-			} else if nodeName == "#cdata-section" {
+			} else if c.Name == "#cdata-section" {
 				nn := &xmlquery.Node{
 					Type: xmlquery.CharDataNode,
 					Data: c.Value,
@@ -244,7 +227,7 @@ func (c addCmd) Run(args []string) error {
 				})
 				xmlquery.AddChild(n, nn)
 
-			} else if nodeName == "#comment" {
+			} else if c.Name == "#comment" {
 				nn := &xmlquery.Node{
 					Type: xmlquery.CommentNode,
 					Data: c.Value,
@@ -257,7 +240,7 @@ func (c addCmd) Run(args []string) error {
 
 			} else {
 				nn := &xmlquery.Node{
-					Data: nodeName,
+					Data: c.Name,
 				}
 				if c.Value != "" {
 					xmlquery.AddChild(nn, &xmlquery.Node{
