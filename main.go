@@ -44,23 +44,7 @@ func (c replaceCmd) Before() error {
 	return nil
 }
 
-func (c replaceCmd) Run(args []string) error {
-	var input io.ReadCloser
-
-	if !termutil.Isatty(os.Stdin.Fd()) {
-		input = NewFakeCloseReader(os.Stdin)
-	} else {
-		if len(args) == 0 {
-			return errors.New("input required")
-		}
-
-		f, err := os.Open(args[0])
-		if err != nil {
-			return err
-		}
-		input = f
-	}
-
+func Replace(input io.ReadCloser, output, errOutput io.Writer, xpath, value, abbrev string, config OutputConfig) error {
 	doc, err := xmlquery.Parse(input)
 	if err != nil {
 		return err
@@ -68,14 +52,14 @@ func (c replaceCmd) Run(args []string) error {
 	input.Close()
 
 	passthrough := false
-	nodes, err := xmlquery.QueryAll(doc, c.XPath)
+	nodes, err := xmlquery.QueryAll(doc, xpath)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "xpath: %v\n", err)
 		passthrough = true
 	}
 
-	if c.Ennet != "" {
-		s, err := ennet.Expand(c.Ennet)
+	if abbrev != "" {
+		s, err := ennet.Expand(abbrev)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "ennet: %v\n", err)
 			passthrough = true
@@ -127,16 +111,36 @@ func (c replaceCmd) Run(args []string) error {
 	} else {
 		for _, n := range nodes {
 			if n.Type == xmlquery.AttributeNode {
-				n.Parent.SetAttr(n.Data, c.Value)
+				n.Parent.SetAttr(n.Data, value)
 			} else {
-				n.Data = c.Value
+				n.Data = value
 			}
 		}
 	}
 
-	OutputXML(os.Stdout, doc, OutputConfig{Indent: strings.Repeat(" ", c.Indent), EmptyElement: c.EmptyElement})
+	OutputXML(output, doc, config)
 
 	return nil
+}
+
+func (c replaceCmd) Run(args []string) error {
+	var input io.ReadCloser
+
+	if !termutil.Isatty(os.Stdin.Fd()) {
+		input = NewFakeCloseReader(os.Stdin)
+	} else {
+		if len(args) == 0 {
+			return errors.New("input required")
+		}
+
+		f, err := os.Open(args[0])
+		if err != nil {
+			return err
+		}
+		input = f
+	}
+
+	return Replace(input, os.Stdout, os.Stderr, c.XPath, c.Value, c.Ennet, OutputConfig{Indent: strings.Repeat(" ", c.Indent), EmptyElement: c.EmptyElement})
 }
 
 type deleteCmd struct {
@@ -145,6 +149,31 @@ type deleteCmd struct {
 	XPath string `cli:"xpath" required:"true"`
 
 	common
+}
+
+func Delete(input io.ReadCloser, output, errOutput io.Writer, xpath string, config OutputConfig) error {
+	doc, err := xmlquery.Parse(input)
+	if err != nil {
+		return err
+	}
+	input.Close()
+
+	nodes, err := xmlquery.QueryAll(doc, xpath)
+	if err != nil {
+		fmt.Fprintf(errOutput, "xpath: %v\n", err)
+	} else {
+		for _, n := range nodes {
+			if n.Type == xmlquery.AttributeNode {
+				n.Parent.RemoveAttr(n.Data)
+			} else {
+				xmlquery.RemoveFromTree(n)
+			}
+		}
+	}
+
+	OutputXML(output, doc, config)
+
+	return nil
 }
 
 func (c deleteCmd) Run(args []string) error {
@@ -164,28 +193,7 @@ func (c deleteCmd) Run(args []string) error {
 		input = f
 	}
 
-	doc, err := xmlquery.Parse(input)
-	if err != nil {
-		return err
-	}
-	input.Close()
-
-	nodes, err := xmlquery.QueryAll(doc, c.XPath)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "xpath: %v\n", err)
-	} else {
-		for _, n := range nodes {
-			if n.Type == xmlquery.AttributeNode {
-				n.Parent.RemoveAttr(n.Data)
-			} else {
-				xmlquery.RemoveFromTree(n)
-			}
-		}
-	}
-
-	OutputXML(os.Stdout, doc, OutputConfig{Indent: strings.Repeat(" ", c.Indent), EmptyElement: c.EmptyElement})
-
-	return nil
+	return Delete(input, os.Stdout, os.Stderr, c.XPath, OutputConfig{Indent: strings.Repeat(" ", c.Indent), EmptyElement: c.EmptyElement})
 }
 
 type addCmd struct {
@@ -210,23 +218,7 @@ func (c addCmd) Before() error {
 	return nil
 }
 
-func (c addCmd) Run(args []string) error {
-	var input io.ReadCloser
-
-	if !termutil.Isatty(os.Stdin.Fd()) {
-		input = NewFakeCloseReader(os.Stdin)
-	} else {
-		if len(args) == 0 {
-			return errors.New("input required")
-		}
-
-		f, err := os.Open(args[0])
-		if err != nil {
-			return err
-		}
-		input = f
-	}
-
+func Add(input io.ReadCloser, output, errOutput io.Writer, xpath, name, value, abbrev string, sibling bool, config OutputConfig) error {
 	doc, err := xmlquery.Parse(input)
 	if err != nil {
 		return fmt.Errorf("input: %w", err)
@@ -234,14 +226,14 @@ func (c addCmd) Run(args []string) error {
 	input.Close()
 
 	passthrough := false
-	nodes, err := xmlquery.QueryAll(doc, c.XPath)
+	nodes, err := xmlquery.QueryAll(doc, xpath)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "xpath: %v\n", err)
 		passthrough = true
 	}
 
-	if c.Ennet != "" {
-		s, err := ennet.Expand(c.Ennet)
+	if abbrev != "" {
+		s, err := ennet.Expand(abbrev)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "ennet: %v\n", err)
 			passthrough = true
@@ -259,7 +251,7 @@ func (c addCmd) Run(args []string) error {
 				break
 			}
 
-			if c.Sibling {
+			if sibling {
 				xmlquery.AddSibling(n, ewdoc.FirstChild.NextSibling)
 			} else {
 				xmlquery.AddChild(n, ewdoc.FirstChild.NextSibling)
@@ -267,48 +259,48 @@ func (c addCmd) Run(args []string) error {
 		}
 	} else {
 		addfunc := xmlquery.AddChild
-		if c.Sibling {
+		if sibling {
 			addfunc = xmlquery.AddSibling
 		}
 
 		for _, n := range nodes {
-			if strings.HasPrefix(c.Name, "@") {
-				xmlquery.AddAttr(n, c.Name[1:], c.Value)
-			} else if c.Name == "#text" {
+			if strings.HasPrefix(name, "@") {
+				xmlquery.AddAttr(n, name[1:], value)
+			} else if name == "#text" {
 				addfunc(n, &xmlquery.Node{
 					Type: xmlquery.TextNode,
-					Data: c.Value,
+					Data: value,
 				})
-			} else if c.Name == "#cdata-section" {
+			} else if name == "#cdata-section" {
 				nn := &xmlquery.Node{
 					Type: xmlquery.CharDataNode,
-					Data: c.Value,
+					Data: value,
 				}
 				addfunc(nn, &xmlquery.Node{
 					Type: xmlquery.TextNode,
-					Data: c.Value,
+					Data: value,
 				})
 				xmlquery.AddChild(n, nn)
 
-			} else if c.Name == "#comment" {
+			} else if name == "#comment" {
 				nn := &xmlquery.Node{
 					Type: xmlquery.CommentNode,
-					Data: c.Value,
+					Data: value,
 				}
 				//xmlquery.AddChild(nn, &xmlquery.Node{
 				//	Type: xmlquery.TextNode,
-				//	Data: c.Value,
+				//	Data: value,
 				//})
 				addfunc(n, nn)
 
 			} else {
 				nn := &xmlquery.Node{
-					Data: c.Name,
+					Data: name,
 				}
-				if c.Value != "" {
+				if value != "" {
 					xmlquery.AddChild(nn, &xmlquery.Node{
 						Type: xmlquery.TextNode,
-						Data: c.Value,
+						Data: value,
 					})
 				}
 				addfunc(n, nn)
@@ -317,9 +309,29 @@ func (c addCmd) Run(args []string) error {
 
 	}
 
-	OutputXML(os.Stdout, doc, OutputConfig{Indent: strings.Repeat(" ", c.Indent), EmptyElement: c.EmptyElement})
+	OutputXML(output, doc, config)
 
 	return nil
+
+}
+func (c addCmd) Run(args []string) error {
+	var input io.ReadCloser
+
+	if !termutil.Isatty(os.Stdin.Fd()) {
+		input = NewFakeCloseReader(os.Stdin)
+	} else {
+		if len(args) == 0 {
+			return errors.New("input required")
+		}
+
+		f, err := os.Open(args[0])
+		if err != nil {
+			return err
+		}
+		input = f
+	}
+
+	return Add(input, os.Stdout, os.Stderr, c.XPath, c.Name, c.Value, c.Ennet, c.Sibling, OutputConfig{Indent: strings.Repeat(" ", c.Indent), EmptyElement: c.EmptyElement})
 }
 
 // Version is app version
