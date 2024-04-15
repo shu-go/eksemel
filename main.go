@@ -30,9 +30,18 @@ type replaceCmd struct {
 	_ struct{} `help:"--xpath //* --value newvalue hoge.xml"`
 
 	XPath string `cli:"xpath" required:"true"`
-	Value string `cli:"value" required:"true"`
+	Value string `cli:"value"`
+	Ennet string `cli:"ennet"`
 
 	common
+}
+
+func (c replaceCmd) Before() error {
+	if c.Value == "" && c.Ennet == "" {
+		return errors.New("either --value or --ennet is required")
+	}
+
+	return nil
 }
 
 func (c replaceCmd) Run(args []string) error {
@@ -58,9 +67,63 @@ func (c replaceCmd) Run(args []string) error {
 	}
 	input.Close()
 
+	passthrough := false
 	nodes, err := xmlquery.QueryAll(doc, c.XPath)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "xpath: %v\n", err)
+		passthrough = true
+	}
+
+	if c.Ennet != "" {
+		s, err := ennet.Expand(c.Ennet)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "ennet: %v\n", err)
+			passthrough = true
+		}
+
+		for _, n := range nodes {
+			if passthrough {
+				break
+			}
+
+			if n.Type != xmlquery.ElementNode {
+				fmt.Fprintf(os.Stderr, "xpath: %v is not an element node\n", n.Data)
+				break
+			}
+
+			b := bytes.NewBufferString(s)
+			ewdoc, err := xmlquery.Parse(b)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "ennet: %v\n", err)
+				break
+			}
+
+			parent := n.Parent
+			nn := ewdoc.FirstChild.NextSibling
+
+			if parent.FirstChild == n {
+				parent.FirstChild = nn
+				nn.NextSibling = n.NextSibling
+				if n.NextSibling != nil {
+					n.NextSibling.PrevSibling = nn
+				} else {
+					// nn is the last
+					parent.LastChild = nn
+				}
+			} else if parent.LastChild == n {
+				parent.LastChild = nn
+				nn.PrevSibling = n.PrevSibling
+				if n.PrevSibling != nil {
+					n.PrevSibling.NextSibling = nn
+				}
+			} else {
+				nn.NextSibling = n.NextSibling
+				nn.PrevSibling = n.PrevSibling
+				n.PrevSibling.NextSibling = nn
+				n.NextSibling.PrevSibling = nn
+			}
+		}
+
 	} else {
 		for _, n := range nodes {
 			if n.Type == xmlquery.AttributeNode {

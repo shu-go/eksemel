@@ -23,6 +23,9 @@
             <option name="value">
                 <desc>new value</desc>
             </option>
+            <option name="replaced">
+                <desc>this will be replaced by emmet</desc>
+            </option>
             <option name="dummy">
                 <desc>this is a false</desc>
             </option>
