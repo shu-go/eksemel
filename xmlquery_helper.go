@@ -44,10 +44,12 @@ func outputXML(b *bufio.Writer, n *xmlquery.Node, level int, config OutputConfig
 	switch n.Type {
 	case xmlquery.TextNode:
 		text := strings.TrimSpace(n.Data)
-		if text != "" && styling {
+		if text != "" {
 			b.WriteString(html.EscapeString(text))
-			if !isOnelineText(n) {
-				b.WriteByte('\n')
+			if styling {
+				if !isOnelineText(n) {
+					b.WriteByte('\n')
+				}
 			}
 		}
 		return
