@@ -277,11 +277,11 @@ func Add(input io.ReadCloser, output, errOutput io.Writer, xpath, name, value, a
 					Type: xmlquery.CharDataNode,
 					Data: value,
 				}
-				addfunc(nn, &xmlquery.Node{
+				xmlquery.AddChild(nn, &xmlquery.Node{
 					Type: xmlquery.TextNode,
 					Data: value,
 				})
-				xmlquery.AddChild(n, nn)
+				addfunc(n, nn)
 
 			} else if name == "#comment" {
 				nn := &xmlquery.Node{
