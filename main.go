@@ -259,19 +259,14 @@ func Add(input io.ReadCloser, output, errOutput io.Writer, xpath, name, value, a
 			}
 		}
 	} else {
-		addfunc := xmlquery.AddChild
-		if sibling {
-			addfunc = xmlquery.AddSibling
-		}
-
 		for _, n := range nodes {
 			if strings.HasPrefix(name, "@") {
 				xmlquery.AddAttr(n, name[1:], value)
 			} else if name == "#text" {
-				addfunc(n, &xmlquery.Node{
+				AddNode(n, &xmlquery.Node{
 					Type: xmlquery.TextNode,
 					Data: value,
-				})
+				}, sibling)
 			} else if name == "#cdata-section" {
 				nn := &xmlquery.Node{
 					Type: xmlquery.CharDataNode,
@@ -281,7 +276,7 @@ func Add(input io.ReadCloser, output, errOutput io.Writer, xpath, name, value, a
 					Type: xmlquery.TextNode,
 					Data: value,
 				})
-				addfunc(n, nn)
+				AddNode(n, nn, sibling)
 
 			} else if name == "#comment" {
 				nn := &xmlquery.Node{
@@ -292,7 +287,7 @@ func Add(input io.ReadCloser, output, errOutput io.Writer, xpath, name, value, a
 				//	Type: xmlquery.TextNode,
 				//	Data: value,
 				//})
-				addfunc(n, nn)
+				AddNode(n, nn, sibling)
 
 			} else {
 				nn := &xmlquery.Node{
@@ -304,7 +299,7 @@ func Add(input io.ReadCloser, output, errOutput io.Writer, xpath, name, value, a
 						Data: value,
 					})
 				}
-				addfunc(n, nn)
+				AddNode(n, nn, sibling)
 			}
 		}
 

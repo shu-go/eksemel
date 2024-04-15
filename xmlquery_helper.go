@@ -31,6 +31,36 @@ func OutputXML(out io.Writer, n *xmlquery.Node, config OutputConfig) {
 	b.Flush()
 }
 
+func AddNode(n, newnode *xmlquery.Node, sibling bool) {
+	if !sibling {
+		xmlquery.AddChild(n, newnode)
+		return
+	}
+
+	parent := n.Parent
+	println(dump(parent))
+	if n == parent.FirstChild {
+		if nnext := n.NextSibling; nnext != nil {
+			newnode.NextSibling = nnext
+			nnext.PrevSibling = newnode
+		} else {
+			parent.LastChild = newnode
+		}
+	} else if n == parent.LastChild {
+		parent.LastChild = newnode
+	} else {
+		nnext := n.NextSibling
+		newnode.NextSibling = nnext
+		nnext.PrevSibling = newnode
+	}
+
+	newnode.PrevSibling = n
+	n.NextSibling = newnode
+
+	newnode.Parent = parent
+	println(dump(parent))
+}
+
 func outputXML(b *bufio.Writer, n *xmlquery.Node, level int, config OutputConfig) {
 	if n.Type == xmlquery.TextNode && strings.TrimSpace(n.Data) == "" {
 		return
