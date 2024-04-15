@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"slices"
 	"strings"
 
 	"github.com/andrew-d/go-termutil"
@@ -347,4 +348,33 @@ func main() {
 	if err := app.Run(os.Args); err != nil {
 		os.Exit(1)
 	}
+}
+
+func dump(n *xmlquery.Node) string {
+	return dumpInner(n, 0)
+}
+
+func dumpInner(n *xmlquery.Node, indent int) string {
+	s := strings.Repeat(" ", indent*2)
+	if n.Type == xmlquery.ElementNode {
+		s += n.Data
+	} else if n.Type == xmlquery.TextNode {
+		s += `"` + n.Data + `"`
+	}
+
+	if len(n.Attr) > 0 {
+		slices.SortFunc(n.Attr, func(a, b xmlquery.Attr) int {
+			return strings.Compare(a.Name.Local, b.Name.Local)
+		})
+		for _, a := range n.Attr {
+			s += " @" + a.Name.Local + "=" + a.Value
+		}
+	}
+
+	child := n.FirstChild
+	for child != nil {
+		s += "\n" + dumpInner(child, indent+1)
+		child = child.NextSibling
+	}
+	return s
 }
