@@ -60,13 +60,14 @@ func (c replaceCmd) Run(args []string) error {
 
 	nodes, err := xmlquery.QueryAll(doc, c.XPath)
 	if err != nil {
-		return err
-	}
-	for _, n := range nodes {
-		if n.Type == xmlquery.AttributeNode {
-			n.Parent.SetAttr(n.Data, c.Value)
-		} else {
-			n.Data = c.Value
+		fmt.Fprintf(os.Stderr, "xpath: %v\n", err)
+	} else {
+		for _, n := range nodes {
+			if n.Type == xmlquery.AttributeNode {
+				n.Parent.SetAttr(n.Data, c.Value)
+			} else {
+				n.Data = c.Value
+			}
 		}
 	}
 
@@ -108,13 +109,14 @@ func (c deleteCmd) Run(args []string) error {
 
 	nodes, err := xmlquery.QueryAll(doc, c.XPath)
 	if err != nil {
-		return err
-	}
-	for _, n := range nodes {
-		if n.Type == xmlquery.AttributeNode {
-			n.Parent.RemoveAttr(n.Data)
-		} else {
-			xmlquery.RemoveFromTree(n)
+		fmt.Fprintf(os.Stderr, "xpath: %v\n", err)
+	} else {
+		for _, n := range nodes {
+			if n.Type == xmlquery.AttributeNode {
+				n.Parent.RemoveAttr(n.Data)
+			} else {
+				xmlquery.RemoveFromTree(n)
+			}
 		}
 	}
 
@@ -168,23 +170,30 @@ func (c addCmd) Run(args []string) error {
 	}
 	input.Close()
 
+	passthrough := false
 	nodes, err := xmlquery.QueryAll(doc, c.XPath)
 	if err != nil {
-		return fmt.Errorf("xpath: %w", err)
+		fmt.Fprintf(os.Stderr, "xpath: %v\n", err)
+		passthrough = true
 	}
 
 	if c.Ennet != "" {
 		s, err := ennet.Expand(c.Ennet)
 		if err != nil {
-			return err
+			fmt.Fprintf(os.Stderr, "ennet: %v\n", err)
+			passthrough = true
 		}
 
 		for _, n := range nodes {
+			if passthrough {
+				break
+			}
 
 			b := bytes.NewBufferString(s)
 			ewdoc, err := xmlquery.Parse(b)
 			if err != nil {
-				return fmt.Errorf("parse ennet: %w", err)
+				fmt.Fprintf(os.Stderr, "ennet: %v\n", err)
+				break
 			}
 
 			if c.Sibling {
@@ -257,7 +266,6 @@ func (c addCmd) Run(args []string) error {
 					})
 				}
 				addfunc(n, nn)
-
 			}
 		}
 
