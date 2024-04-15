@@ -7,6 +7,7 @@ require (
 	github.com/antchfx/xmlquery v1.4.0
 	github.com/shu-go/ennet v0.4.3
 	github.com/shu-go/gli/v2 v2.2.0
+	github.com/shu-go/gotwant v0.0.0-20190920074605-b4f19c0bac91
 )
 
 require (
