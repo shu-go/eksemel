@@ -38,7 +38,6 @@ func AddNode(n, newnode *xmlquery.Node, sibling bool) {
 	}
 
 	parent := n.Parent
-	println(dump(parent))
 	if n == parent.FirstChild {
 		if nnext := n.NextSibling; nnext != nil {
 			newnode.NextSibling = nnext
@@ -58,7 +57,6 @@ func AddNode(n, newnode *xmlquery.Node, sibling bool) {
 	n.NextSibling = newnode
 
 	newnode.Parent = parent
-	println(dump(parent))
 }
 
 func outputXML(b *bufio.Writer, n *xmlquery.Node, level int, config OutputConfig) {
