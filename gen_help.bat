@@ -10,6 +10,7 @@ eksemel replace --xpath \"//command[@name='replace']//option[@name='replaced']\"
 eksemel add --xpath \"//command[@name='replace']\" --sibling --ennet \"command[name=delete]\" | ^
 eksemel add --xpath \"//command[@name='delete']\" --ennet \"options>option[name=xpath]\"  | ^
 eksemel add --xpath \"//command[@name='delete']//option[@name='xpath']\" --name "desc" --value "An XPath to the target" | ^
-eksemel add --xpath \"//command[@name='replace']\" --sibling --name #comment --value "vvv by ennet vvv" | ^
+eksemel add --xpath \"//command[@name='delete']\" --sibling --name #comment --value "vvv by ennet vvv" | ^
 eksemel add --xpath \"//command[@name='delete']\" --sibling --ennet "\"command[name=delete]^>options^>option[name=xpath]^>desc{An XPath to the target}\"" | ^
+eksemel add --xpath \"//command//option[following-sibling::option]\" --sibling --name #comment --value " - - - " | ^
 eksemel replace --xpath \"/xml\" --value eksemel > help.xml
