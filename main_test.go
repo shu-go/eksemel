@@ -106,6 +106,44 @@ func TestAdd(t *testing.T) {
 				value: `textvalue`,
 				out:   xmlpi + `<root><hoge>textvalue</hoge></root>`,
 			},
+			{ /*text*/
+				input:   xmlpi + `<root><hoge/></root>`,
+				xpath:   `/root/hoge`,
+				name:    `#text`,
+				value:   `textvalue`,
+				sibling: true,
+				out:     xmlpi + `<root><hoge/>textvalue</root>`,
+			},
+			{ /*comment*/
+				input: xmlpi + `<root><hoge/></root>`,
+				xpath: `/root/hoge`,
+				name:  `#comment`,
+				value: `comment text`,
+				out:   xmlpi + `<root><hoge><!--comment text--></hoge></root>`,
+			},
+			{ /*comment*/
+				input:   xmlpi + `<root><hoge/></root>`,
+				xpath:   `/root/hoge`,
+				name:    `#comment`,
+				value:   `comment text`,
+				sibling: true,
+				out:     xmlpi + `<root><hoge/><!--comment text--></root>`,
+			},
+			{ /*cdata-section*/
+				input: xmlpi + `<root><hoge/></root>`,
+				xpath: `/root/hoge`,
+				name:  `#cdata-section`,
+				value: `cdata text`,
+				out:   xmlpi + `<root><hoge><![CDATA[cdata text]]></hoge></root>`,
+			},
+			{ /*cdata-section*/
+				input:   xmlpi + `<root><hoge/></root>`,
+				xpath:   `/root/hoge`,
+				name:    `#cdata-section`,
+				value:   `cdata text`,
+				sibling: true,
+				out:     xmlpi + `<root><hoge/><![CDATA[cdata text]]></root>`,
+			},
 		})
 	})
 
