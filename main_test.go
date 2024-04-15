@@ -3,6 +3,7 @@ package main_test
 import (
 	"bytes"
 	"strconv"
+	"strings"
 	"testing"
 
 	main "github.com/shu-go/eksemel"
@@ -27,6 +28,8 @@ type addtestdata struct {
 	ennet   string
 	sibling bool
 
+	indent int
+
 	err         error
 	out, errout string
 }
@@ -45,10 +48,10 @@ func testadd(t *testing.T, data []addtestdata) {
 			d.value,
 			d.ennet,
 			d.sibling,
-			main.OutputConfig{Indent: "", EmptyElement: true},
+			main.OutputConfig{Indent: strings.Repeat(" ", d.indent), EmptyElement: true},
 		)
 
-		seq := strconv.Itoa(i)
+		seq := strconv.Itoa(i+1) + "/" + strconv.Itoa(len(data))
 
 		gotwant.TestError(t, err, d.err, gotwant.Desc(seq))
 		gotwant.Test(t, out.String(), d.out, gotwant.Desc(seq))
@@ -84,6 +87,34 @@ func TestAdd(t *testing.T) {
 				ennet:   `a>b`,
 				sibling: true,
 				out:     xmlpi + `<root><hoge/></root>`,
+			},
+			{
+				input: xmlpi + `<root><hoge/></root>`,
+				xpath: `/root/hoge`,
+				name:  `a`,
+				out:   xmlpi + `<root><hoge><a/></hoge></root>`,
+			},
+			{ /*with text*/
+				input: xmlpi + `<root><hoge/></root>`,
+				xpath: `/root/hoge`,
+				name:  `a`,
+				value: `a text`,
+				out:   xmlpi + `<root><hoge><a>a text</a></hoge></root>`,
+			},
+			{ /*with text*/
+				input:   xmlpi + `<root><hoge/></root>`,
+				xpath:   `/root/hoge`,
+				name:    `a`,
+				value:   `a text`,
+				sibling: true,
+				out:     xmlpi + `<root><hoge/><a>a text</a></root>`,
+			},
+			{
+				input:   xmlpi + `<root><hoge/></root>`,
+				xpath:   `/root/hoge`,
+				name:    `a`,
+				sibling: true,
+				out:     xmlpi + `<root><hoge/><a/></root>`,
 			},
 			{ /*attr*/
 				input: xmlpi + `<root><hoge/></root>`,
@@ -143,6 +174,54 @@ func TestAdd(t *testing.T) {
 				value:   `cdata text`,
 				sibling: true,
 				out:     xmlpi + `<root><hoge/><![CDATA[cdata text]]></root>`,
+			},
+			{ /*multiple*/
+				input: xmlpi + `<root><hoge/><hoge/><hoge><z/></hoge></root>`,
+				xpath: `/root/hoge`,
+				name:  `a`,
+				out:   xmlpi + `<root><hoge><a/></hoge><hoge><a/></hoge><hoge><z/><a/></hoge></root>`,
+			},
+			{ /*multiple*/
+				input:  xmlpi + `<root><hoge/><hoge/><hoge><z/></hoge></root>`,
+				xpath:  `/root/hoge`,
+				name:   `a`,
+				indent: 1,
+				out: xmlpi + `
+<root>
+ <hoge>
+  <a/>
+ </hoge>
+ <hoge>
+  <a/>
+ </hoge>
+ <hoge>
+  <z/>
+  <a/>
+ </hoge>
+</root>
+`,
+			},
+			{ /*multiple*/
+				input:   xmlpi + `<root><hoge/><hoge/><hoge><z/></hoge></root>`,
+				xpath:   `/root/hoge`,
+				name:    `a`,
+				sibling: true,
+				out:     xmlpi + `<root><hoge/><a/><hoge/><a/><hoge><z/></hoge><a/></root>`,
+				//out: xmlpi + `<root><hoge/><hoge/><hoge><z/></hoge><a/><a/><a/></root>`,
+			},
+			{ /*multiple*/
+				input: xmlpi + `<root><hoge/><hoge/><hoge><z/></hoge></root>`,
+				xpath: `/root/hoge`,
+				name:  `@a`,
+				value: `v`,
+				out:   xmlpi + `<root><hoge a="v"/><hoge a="v"/><hoge a="v"><z/></hoge></root>`,
+			},
+			{ /*multiple*/
+				input: xmlpi + `<root><hoge/><hoge/><hoge><z/></hoge></root>`,
+				xpath: `/root/hoge`,
+				name:  `@a`,
+				value: `v`,
+				out:   xmlpi + `<root><hoge a="v"/><hoge a="v"/><hoge a="v"><z/></hoge></root>`,
 			},
 		})
 	})
