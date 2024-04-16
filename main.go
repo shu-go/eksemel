@@ -206,7 +206,7 @@ type addCmd struct {
 
 	Ennet string `cli:"ennet" help:"emmet-like abbreviation"`
 
-	Sibling bool `cli:"sibling" default:"false" help:"as a LAST sibling"`
+	Sibling bool `cli:"sibling" default:"false" help:"as a next sibling"`
 
 	common
 }
