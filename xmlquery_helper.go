@@ -74,10 +74,8 @@ func outputXML(b *bufio.Writer, n *xmlquery.Node, level int, config OutputConfig
 		text := strings.TrimSpace(n.Data)
 		if text != "" {
 			b.WriteString(html.EscapeString(text))
-			if styling {
-				if !isOnelineText(n) {
-					b.WriteByte('\n')
-				}
+			if !isOnelineText(n) {
+				writeStylingNewLine(b, styling)
 			}
 		}
 		return
@@ -85,88 +83,77 @@ func outputXML(b *bufio.Writer, n *xmlquery.Node, level int, config OutputConfig
 		b.WriteString("<![CDATA[")
 		b.WriteString(n.Data)
 		b.WriteString("]]>")
-		if styling {
-			b.WriteByte('\n')
-		}
+		writeStylingNewLine(b, styling)
 		return
 	case xmlquery.CommentNode:
 		b.WriteString("<!--")
 		b.WriteString(n.Data)
 		b.WriteString("-->")
-		if styling {
-			b.WriteByte('\n')
-		}
+		writeStylingNewLine(b, styling)
 		return
 	case xmlquery.NotationNode:
 		fmt.Fprintf(b, "<!%s>", n.Data)
-		if styling {
-			b.WriteByte('\n')
-		}
+		writeStylingNewLine(b, styling)
 		return
 	case xmlquery.DeclarationNode:
 		b.WriteString("<?" + n.Data)
 	default:
-		if n.Prefix == "" {
-			b.WriteString("<" + n.Data)
-		} else {
-			fmt.Fprintf(b, "<%s:%s", n.Prefix, n.Data)
-		}
+		b.WriteByte('<')
+		writeName(b, n.Prefix, n.Data)
 	}
 
 	for _, attr := range n.Attr {
-		if attr.Name.Space != "" {
-			fmt.Fprintf(b, ` %s:%s=`, attr.Name.Space, attr.Name.Local)
-		} else {
-			fmt.Fprintf(b, ` %s=`, attr.Name.Local)
-		}
+		b.WriteByte(' ')
+		writeName(b, attr.Name.Space, attr.Name.Local)
+		b.WriteByte('=')
 		b.WriteByte('"')
 		b.WriteString(html.EscapeString(attr.Value))
 		b.WriteByte('"')
 	}
+
 	if n.Type == xmlquery.DeclarationNode {
 		b.WriteString("?>")
-	} else {
-		if n.FirstChild != nil || !config.EmptyElement {
-			b.WriteString(">")
-			if styling {
-				newline := false
-				curr := n.FirstChild
-				for curr != nil {
-					if !isOnelineText(curr) {
-						newline = true
-						break
-					}
-					curr = curr.NextSibling
-				}
-				if newline {
-					b.WriteByte('\n')
-				}
+		writeStylingNewLine(b, styling)
+		return
+	}
+
+	if n.FirstChild == nil && config.EmptyElement {
+		b.WriteString("/>")
+		writeStylingNewLine(b, styling)
+		return
+	}
+
+	b.WriteString(">")
+
+	if styling {
+		newline := false
+		curr := n.FirstChild
+		for curr != nil {
+			if !isOnelineText(curr) {
+				newline = true
+				break
 			}
-		} else {
-			b.WriteString("/>")
-			if styling {
-				b.WriteByte('\n')
-			}
-			return
+			curr = curr.NextSibling
+		}
+		if newline {
+			b.WriteByte('\n')
 		}
 	}
+
 	for child := n.FirstChild; child != nil; child = child.NextSibling {
 		outputXML(b, child, level+1, config)
 	}
+
 	if n.Type != xmlquery.DeclarationNode {
 		if styling && !isOnelineText(n.FirstChild) {
 			b.WriteString(strings.Repeat(config.Indent, level))
 		}
-		if n.Prefix == "" {
-			fmt.Fprintf(b, "</%s>", n.Data)
-		} else {
-			fmt.Fprintf(b, "</%s:%s>", n.Prefix, n.Data)
-		}
+		b.WriteString("</")
+		writeName(b, n.Prefix, n.Data)
+		b.WriteByte('>')
 	}
 
-	if styling {
-		b.WriteByte('\n')
-	}
+	writeStylingNewLine(b, styling)
 }
 
 func isOnelineText(n *xmlquery.Node) bool {
@@ -175,4 +162,20 @@ func isOnelineText(n *xmlquery.Node) bool {
 			strings.IndexByte(strings.TrimSpace(n.Data), '\n') == -1 &&
 			n.NextSibling == nil &&
 			n.PrevSibling == nil
+}
+
+func writeName(b *bufio.Writer, space, name string) (int, error) {
+	if space == "" {
+		return b.WriteString(name)
+	}
+	b.WriteString(space)
+	b.WriteByte(':')
+	return b.WriteString(name)
+}
+
+func writeStylingNewLine(b *bufio.Writer, styling bool) error {
+	if !styling {
+		return nil
+	}
+	return b.WriteByte('\n')
 }
