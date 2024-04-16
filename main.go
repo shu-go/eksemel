@@ -302,14 +302,13 @@ func Add(input io.ReadCloser, output, errOutput io.Writer, xpath, name, value, a
 				AddNode(n, nn, sibling)
 			}
 		}
-
 	}
 
 	OutputXML(output, doc, config)
 
 	return nil
-
 }
+
 func (c addCmd) Run(args []string) error {
 	var input io.ReadCloser
 

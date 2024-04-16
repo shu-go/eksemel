@@ -206,7 +206,7 @@ func TestAdd(t *testing.T) {
 			name:    `a`,
 			sibling: true,
 			out:     xmlpi + `<root><hoge/><a/><hoge/><a/><hoge><z/></hoge><a/></root>`,
-			//out: xmlpi + `<root><hoge/><hoge/><hoge><z/></hoge><a/><a/><a/></root>`,
+			// out: xmlpi + `<root><hoge/><hoge/><hoge><z/></hoge><a/><a/><a/></root>`,
 		},
 		{ /*multiple*/
 			input: xmlpi + `<root><hoge/><hoge/><hoge><z/></hoge></root>`,
