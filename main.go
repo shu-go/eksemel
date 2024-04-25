@@ -20,6 +20,8 @@ type globalCmd struct {
 	Replace replaceCmd
 	Delete  deleteCmd
 	Add     addCmd
+
+	Get getCmd
 }
 
 type common struct {
@@ -327,6 +329,66 @@ func (c addCmd) Run(args []string) error {
 	}
 
 	return Add(input, os.Stdout, os.Stderr, c.XPath, c.Name, c.Value, c.Ennet, c.Sibling, OutputConfig{Indent: strings.Repeat(" ", c.Indent), EmptyElement: c.EmptyElement})
+}
+
+type getCmd struct {
+	XPath string `cli:"xpath" required:"true"`
+
+	Multiple  bool
+	Separator string `cli:"separator,sep" type:"Separator" default:"\n"`
+
+	// uncommon
+	Indent       int  `cli:"indent=NUMBER" default:"0"`
+	EmptyElement bool `cli:"empty" default:"true"`
+}
+
+func Get(input io.ReadCloser, output, errOutput io.Writer, xpath string, multiple bool, sep string, config OutputConfig) error {
+	doc, err := xmlquery.Parse(input)
+	if err != nil {
+		return err
+	}
+	input.Close()
+
+	nodes, err := xmlquery.QueryAll(doc, xpath)
+	if err != nil {
+		return fmt.Errorf("xpath: %v\n", err)
+	}
+
+	data := ""
+	for _, n := range nodes {
+		if data != "" {
+			data += sep
+		}
+		data += n.Data
+
+		if !multiple {
+			break
+		}
+	}
+
+	fmt.Println(data)
+
+	return nil
+}
+
+func (c getCmd) Run(args []string) error {
+	var input io.ReadCloser
+
+	if !termutil.Isatty(os.Stdin.Fd()) {
+		input = NewFakeCloseReader(os.Stdin)
+	} else {
+		if len(args) == 0 {
+			return errors.New("input required")
+		}
+
+		f, err := os.Open(args[0])
+		if err != nil {
+			return err
+		}
+		input = f
+	}
+
+	return Get(input, os.Stdout, os.Stderr, c.XPath, c.Multiple, c.Separator, OutputConfig{Indent: strings.Repeat(" ", c.Indent), EmptyElement: c.EmptyElement})
 }
 
 // Version is app version
