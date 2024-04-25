@@ -30,7 +30,7 @@ type common struct {
 }
 
 type replaceCmd struct {
-	_ struct{} `help:"--xpath //* --value newvalue hoge.xml"`
+	_ struct{} `help:"eksemel replace --xpath //* --value newvalue hoge.xml"`
 
 	XPath string `cli:"xpath" required:"true"`
 	Value string `cli:"value"`
@@ -147,7 +147,7 @@ func (c replaceCmd) Run(args []string) error {
 }
 
 type deleteCmd struct {
-	_ struct{} `help:"--xpath //* hoge.xml"`
+	_ struct{} `help:"eksemel delete --xpath //* hoge.xml"`
 
 	XPath string `cli:"xpath" required:"true"`
 
@@ -200,7 +200,7 @@ func (c deleteCmd) Run(args []string) error {
 }
 
 type addCmd struct {
-	_ struct{} `help:"--xpath //* --name newnode --value newvalue hoge.xml"`
+	_ struct{} `help:"eksemel add --xpath //* --name newnode --value newvalue hoge.xml"`
 
 	XPath string `cli:"xpath" help:"parent" required:"true"`
 	Name  string `cli:"name" help:"nodename, @attrname, #text, #cdata-section, #comment"`
@@ -332,6 +332,8 @@ func (c addCmd) Run(args []string) error {
 }
 
 type getCmd struct {
+	_ struct{} `help:"eksemel get --xpath //*  hoge.xml"`
+
 	XPath string `cli:"xpath" required:"true"`
 
 	Multiple  bool

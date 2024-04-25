@@ -49,6 +49,8 @@ eksemel add --xpath \"//command[@name='add']//option[@name='name']\" --name #com
 eksemel add --xpath \"//command[@name='add']/options\" --ennet "\"option[name=ennet]{emmet-like abbreviation}\"" | ^
 eksemel delete --xpath \"//command[@name='replace']//option[@name='dummy']\" | ^
 eksemel replace --xpath \"/xml\" --value eksemel > help.xml
+
+eksemel get --xpath \"//desc/text()\" --multiple help.xml
 ```
 
 # Install
