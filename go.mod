@@ -4,7 +4,7 @@ go 1.23
 
 require (
 	github.com/andrew-d/go-termutil v0.0.0-20150726205930-009166a695a2
-	github.com/antchfx/xmlquery v1.4.2
+	github.com/antchfx/xmlquery v1.4.3
 	github.com/shu-go/ennet v0.4.4
 	github.com/shu-go/gli/v2 v2.3.0
 	github.com/shu-go/gotwant v0.1.0
