@@ -1,7 +1,6 @@
 module github.com/shu-go/eksemel
 
 go 1.23
-
 require (
 	github.com/andrew-d/go-termutil v0.0.0-20150726205930-009166a695a2
 	github.com/antchfx/xmlquery v1.4.3
@@ -18,6 +17,6 @@ require (
 	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/shu-go/cliparser v0.2.4 // indirect
 	golang.org/x/exp v0.0.0-20241217172543-b2144cdd0a67 // indirect
-	golang.org/x/net v0.33.0 // indirect
-	golang.org/x/text v0.21.0 // indirect
+	golang.org/x/net v0.36.0 // indirect
+	golang.org/x/text v0.22.0 // indirect
 )
