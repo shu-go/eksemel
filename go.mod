@@ -1,6 +1,9 @@
 module github.com/shu-go/eksemel
 
-go 1.23
+go 1.24
+
+toolchain go1.24.1
+
 require (
 	github.com/andrew-d/go-termutil v0.0.0-20150726205930-009166a695a2
 	github.com/antchfx/xmlquery v1.4.3
