@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"reflect"
 	"slices"
 	"strings"
 
@@ -48,11 +49,17 @@ func (c replaceCmd) Before() error {
 }
 
 func Replace(input io.ReadCloser, output, errOutput io.Writer, xpath, value, abbrev string, config OutputConfig) error {
-	doc, err := xmlquery.Parse(input)
-	if err != nil {
-		return err
+	var doc *xmlquery.Node
+	var err error
+	if reflect.ValueOf(input).IsNil() {
+		doc = &xmlquery.Node{}
+	} else {
+		doc, err = xmlquery.Parse(input)
+		if err != nil {
+			return fmt.Errorf("input: %w", err)
+		}
+		input.Close()
 	}
-	input.Close()
 
 	passthrough := false
 	nodes, err := xmlquery.QueryAll(doc, xpath)
@@ -155,11 +162,17 @@ type deleteCmd struct {
 }
 
 func Delete(input io.ReadCloser, output, errOutput io.Writer, xpath string, config OutputConfig) error {
-	doc, err := xmlquery.Parse(input)
-	if err != nil {
-		return err
+	var doc *xmlquery.Node
+	var err error
+	if reflect.ValueOf(input).IsNil() {
+		doc = &xmlquery.Node{}
+	} else {
+		doc, err = xmlquery.Parse(input)
+		if err != nil {
+			return fmt.Errorf("input: %w", err)
+		}
+		input.Close()
 	}
-	input.Close()
 
 	nodes, err := xmlquery.QueryAll(doc, xpath)
 	if err != nil {
@@ -222,11 +235,17 @@ func (c addCmd) Before() error {
 }
 
 func Add(input io.ReadCloser, output, errOutput io.Writer, xpath, name, value, abbrev string, sibling bool, config OutputConfig) error {
-	doc, err := xmlquery.Parse(input)
-	if err != nil {
-		return fmt.Errorf("input: %w", err)
+	var doc *xmlquery.Node
+	var err error
+	if reflect.ValueOf(input).IsNil() {
+		doc = &xmlquery.Node{}
+	} else {
+		doc, err = xmlquery.Parse(input)
+		if err != nil {
+			return fmt.Errorf("input: %w", err)
+		}
+		input.Close()
 	}
-	input.Close()
 
 	passthrough := false
 	nodes, err := xmlquery.QueryAll(doc, xpath)

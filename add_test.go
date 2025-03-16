@@ -2,6 +2,7 @@ package main_test
 
 import (
 	"bytes"
+	"io"
 	"strconv"
 	"strings"
 	"testing"
@@ -12,8 +13,12 @@ import (
 
 const xmlpi = `<?xml version="1.0" encoding="UTF-8"?>`
 
-func prepare(input string) (in, out, errout *bytes.Buffer) {
-	in = bytes.NewBufferString(input)
+func prepare(input string) (in io.Reader, out, errout io.ReadWriter) {
+	if input == "" {
+		in = nil
+	} else {
+		in = bytes.NewBufferString(input)
+	}
 	out = &bytes.Buffer{}
 	errout = &bytes.Buffer{}
 
@@ -32,6 +37,14 @@ type addtestdata struct {
 
 	err         error
 	out, errout string
+}
+
+func readAll(r io.Reader) string {
+	s, err := io.ReadAll(r)
+	if err != nil {
+		return ""
+	}
+	return string(s)
 }
 
 func testadd(t *testing.T, data []addtestdata) {
@@ -54,8 +67,8 @@ func testadd(t *testing.T, data []addtestdata) {
 		seq := strconv.Itoa(i+1) + "/" + strconv.Itoa(len(data))
 
 		gotwant.TestError(t, err, d.err, gotwant.Desc(seq))
-		gotwant.Test(t, out.String(), d.out, gotwant.Desc(seq))
-		gotwant.Test(t, errout.String(), d.errout, gotwant.Desc(seq))
+		gotwant.Test(t, readAll(out), d.out, gotwant.Desc(seq))
+		gotwant.Test(t, readAll(errout), d.errout, gotwant.Desc(seq))
 	}
 }
 
@@ -223,4 +236,23 @@ func TestAdd(t *testing.T) {
 			out:   xmlpi + `<root><hoge a="v"/><hoge a="v"/><hoge a="v"><z/></hoge></root>`,
 		},
 	})
+}
+
+func BenchmarkAdd(b *testing.B) {
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		in, out, errout := prepare(xmlpi + `<root><hoge/></root>`)
+		main.Add(
+			main.NewFakeCloseReader(in),
+			out,
+			errout,
+			`/root/hoge`,
+			``,
+			``,
+			`a>b`,
+			true,
+			main.OutputConfig{Indent: "", EmptyElement: true},
+		)
+
+	}
 }

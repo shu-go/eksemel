@@ -1,21 +1,29 @@
 package main
 
-import "io"
+import (
+	"io"
+)
 
 type FakeCloseReader struct {
-	reader io.Reader
+	io.Reader
 }
 
-func NewFakeCloseReader(r io.Reader) FakeCloseReader {
-	return FakeCloseReader{
-		reader: r,
+func NewFakeCloseReader(r io.Reader) *FakeCloseReader {
+	if r == io.Reader(nil) {
+		return nil
+	}
+	return &FakeCloseReader{
+		r,
 	}
 }
 
-func (f FakeCloseReader) Close() error {
+func (f *FakeCloseReader) Close() error {
 	return nil
 }
 
-func (f FakeCloseReader) Read(p []byte) (n int, err error) {
-	return f.reader.Read(p)
+func (f *FakeCloseReader) Read(p []byte) (n int, err error) {
+	if f == nil {
+		return 0, io.EOF
+	}
+	return f.Reader.Read(p)
 }

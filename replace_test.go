@@ -39,8 +39,8 @@ func testreplace(t *testing.T, data []replacetestdata) {
 		seq := strconv.Itoa(i+1) + "/" + strconv.Itoa(len(data))
 
 		gotwant.TestError(t, err, d.err, gotwant.Desc(seq))
-		gotwant.Test(t, out.String(), d.out, gotwant.Desc(seq))
-		gotwant.Test(t, errout.String(), d.errout, gotwant.Desc(seq))
+		gotwant.Test(t, readAll(out), d.out, gotwant.Desc(seq))
+		gotwant.Test(t, readAll(errout), d.errout, gotwant.Desc(seq))
 	}
 }
 
