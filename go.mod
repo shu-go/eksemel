@@ -20,6 +20,6 @@ require (
 	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/shu-go/cliparser v0.2.4 // indirect
 	golang.org/x/exp v0.0.0-20250305212735-054e65f0b394 // indirect
-	golang.org/x/net v0.37.0 // indirect
+	golang.org/x/net v0.38.0 // indirect
 	golang.org/x/text v0.23.0 // indirect
 )
