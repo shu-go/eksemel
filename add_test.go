@@ -239,8 +239,8 @@ func TestAdd(t *testing.T) {
 }
 
 func BenchmarkAdd(b *testing.B) {
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
+
+	for b.Loop() {
 		in, out, errout := prepare(xmlpi + `<root><hoge/></root>`)
 		main.Add(
 			main.NewFakeCloseReader(in),

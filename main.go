@@ -432,11 +432,12 @@ func dump(n *xmlquery.Node) string {
 }
 
 func dumpInner(n *xmlquery.Node, indent int) string {
-	s := strings.Repeat(" ", indent*2)
+	var s strings.Builder
+	s.WriteString(strings.Repeat(" ", indent*2))
 	if n.Type == xmlquery.ElementNode {
-		s += n.Data
+		s.WriteString(n.Data)
 	} else if n.Type == xmlquery.TextNode {
-		s += `"` + n.Data + `"`
+		s.WriteString(`"` + n.Data + `"`)
 	}
 
 	if len(n.Attr) > 0 {
@@ -444,14 +445,14 @@ func dumpInner(n *xmlquery.Node, indent int) string {
 			return strings.Compare(a.Name.Local, b.Name.Local)
 		})
 		for _, a := range n.Attr {
-			s += " @" + a.Name.Local + "=" + a.Value
+			s.WriteString(" @" + a.Name.Local + "=" + a.Value)
 		}
 	}
 
 	child := n.FirstChild
 	for child != nil {
-		s += "\n" + dumpInner(child, indent+1)
+		s.WriteString("\n" + dumpInner(child, indent+1))
 		child = child.NextSibling
 	}
-	return s
+	return s.String()
 }
